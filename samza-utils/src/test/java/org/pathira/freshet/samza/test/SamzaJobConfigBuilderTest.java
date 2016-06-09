@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.pathirage.freshet.samza.SamzaJobConfigBuilder;
 
-public class SamzaJobConfigurationTest {
+public class SamzaJobConfigBuilderTest {
   @Test
   public void testAddSystemWithoutSerdes() {
     SamzaJobConfigBuilder jobConfiguration = new SamzaJobConfigBuilder();
