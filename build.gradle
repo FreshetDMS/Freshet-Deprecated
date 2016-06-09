@@ -1,0 +1,66 @@
+
+buildscript {
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+  apply from: file('gradle/buildscript.gradle'), to: buildscript
+}
+
+allprojects {
+  repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+      url 'https://repository.apache.org/content/repositories/snapshots/'
+    }
+    maven {
+      url 'http://conjars.org/repo'
+    }
+  }
+}
+
+//apply from: file('gradle/convention.gradle')
+//apply from: file('gradle/maven.gradle')
+//apply from: file('gradle/check.gradle')
+//apply from: file('gradle/license.gradle')
+//apply from: file('gradle/release.gradle')
+apply from: file("gradle/dependency-versions.gradle")
+
+
+allprojects {
+  apply plugin: "idea"
+}
+
+project(':beam-runner') {
+  apply plugin: 'java'
+  dependencies {
+    compile "org.apache.samza:samza-api:$samzaVersion"
+    compile "org.apache.samza:samza-core_$scalaVersion:$samzaVersion"
+    compile "org.apache.samza:samza-kv_$scalaVersion:$samzaVersion"
+    compile "org.apache.samza:samza-kafka_$scalaVersion:$samzaVersion"
+    compile "org.apache.samza:samza-yarn_$scalaVersion:$samzaVersion"
+    compile "org.apache.kafka:kafka_$scalaVersion:$kafkaVersion"
+    compile "org.apache.beam:java-sdk-all:$beamVersion"
+    compile "org.apache.beam:java-examples-all:$beamVersion"
+    compile "com.google.guava:guava:$guavaVersion"
+    compile "com.google.auto.service:auto-service:$googleAutoServiceVersion"
+  }
+}
+
+project(':samza-utils') {
+  apply plugin: 'java'
+  dependencies {
+    compile "org.apache.samza:samza-api:$samzaVersion"
+    compile "org.apache.samza:samza-core_$scalaVersion:$samzaVersion"
+    compile "org.apache.samza:samza-yarn_$scalaVersion:$samzaVersion"
+    compile "org.apache.curator:curator-framework:$curatorVersion"
+    compile "org.apache.kafka:kafka_$scalaVersion:$kafkaVersion"
+    compile "org.apache.kafka:kafka-clients:$kafkaVersion"
+    compile "com.101tec:zkclient:$zkClientVersion"
+    compile "org.apache.zookeeper:zookeeper:$zookeeperVersion"
+    testCompile "org.apache.curator:curator-test:$curatorVersion"
+    testCompile "org.apache.kafka:kafka_$scalaVersion:$kafkaVersion:test"
+    testCompile "junit:junit:$junitVersion"
+  }
+}
