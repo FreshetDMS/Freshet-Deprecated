@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package org.pathirage.freshet.beam;
+package org.pathira.freshet.samza.test;
 
 import org.apache.samza.system.kafka.KafkaSystemFactory;
 import org.junit.Assert;
 import org.junit.Test;
-import org.pathirage.freshet.beam.config.SamzaJobConfiguration;
+import org.pathirage.freshet.samza.SamzaJobConfigBuilder;
 
 public class SamzaJobConfigurationTest {
   @Test
   public void testAddSystemWithoutSerdes() {
-    SamzaJobConfiguration jobConfiguration = new SamzaJobConfiguration();
+    SamzaJobConfigBuilder jobConfiguration = new SamzaJobConfigBuilder();
 
     jobConfiguration = jobConfiguration.addSystem("kafka", KafkaSystemFactory.class, null, null, null);
 
-    Assert.assertEquals(KafkaSystemFactory.class.getName(), jobConfiguration.get("systems.kafka.samza.factory"));
+    Assert.assertEquals(KafkaSystemFactory.class.getName(), jobConfiguration.build().get("systems.kafka.samza.factory"));
   }
 
 
