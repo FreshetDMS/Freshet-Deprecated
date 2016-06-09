@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.pathirage.freshet.beam.config;
+package org.pathirage.freshet.samza;
 
 import org.apache.samza.checkpoint.CheckpointManagerFactory;
 import org.apache.samza.checkpoint.kafka.KafkaCheckpointManagerFactory;
@@ -27,9 +27,9 @@ import org.apache.samza.task.StreamTask;
 import java.util.HashMap;
 
 import static java.lang.String.format;
-import static org.pathirage.freshet.beam.utils.Validations.*;
+import static org.pathirage.freshet.common.Validations.*;
 
-public class SamzaJobConfiguration extends HashMap<String, String> {
+public class SamzaJobConfigBuilder extends HashMap<String, String> {
   private static final String SERIALIZER_PREFIX = "serializers.registry.%s";
   private static final String SERIALIZER_SERDE_CLASS = SERIALIZER_PREFIX + ".class";
 
@@ -64,8 +64,11 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
   private static final String YARN_CONTAINER_MAX_CPU_CORES = "yarn.container.cpu.cores";
   private static final String YARN_CONTAINER_COUNT = "yarn.container.count";
 
+  public MapConfig build() {
+    return new MapConfig(this);
+  }
 
-  public SamzaJobConfiguration addSerde(String name, Class<? extends Serde> serdeClass) {
+  public SamzaJobConfigBuilder addSerde(String name, Class<? extends Serde> serdeClass) {
     isNullOrEmpty(name, "Serde name");
     isNull(serdeClass, "Serde class");
 
@@ -74,7 +77,7 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfiguration addSystem(String name,
+  public SamzaJobConfigBuilder addSystem(String name,
                                          Class<? extends SystemFactory> factory,
                                          String keySerde,
                                          String messageSerde,
@@ -103,7 +106,7 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfiguration addStream(String system, String name, String keySerde,
+  public SamzaJobConfigBuilder addStream(String system, String name, String keySerde,
                                          String messageSerde, Boolean isBootstrap) {
     isNullOrEmpty(system, "System name");
     isNullOrEmpty(name, "Stream name");
@@ -125,7 +128,7 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfiguration task(Class<? extends StreamTask> taskClass) {
+  public SamzaJobConfigBuilder task(Class<? extends StreamTask> taskClass) {
     isNull(taskClass, "Task class");
 
     put(TASK_CLASS, taskClass.getName());
@@ -133,7 +136,7 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfiguration addInput(String system, String stream) {
+  public SamzaJobConfigBuilder addInput(String system, String stream) {
     isNullOrEmpty(system, "System name");
     isNullOrEmpty(stream, "Stream name");
 
@@ -150,11 +153,11 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfiguration addBroadcastInput(String broadcastInput) {
+  public SamzaJobConfigBuilder addBroadcastInput(String broadcastInput) {
     throw new UnsupportedOperationException("Not implemented yet.");
   }
 
-  public SamzaJobConfiguration checkpointingConfig(Class<? extends CheckpointManagerFactory> checkpointFactoryClass, String system) {
+  public SamzaJobConfigBuilder checkpointingConfig(Class<? extends CheckpointManagerFactory> checkpointFactoryClass, String system) {
     if (checkpointFactoryClass != null) {
       put(CHECKPOINT_MANAGER_FACTORY, checkpointFactoryClass.getName());
     }
@@ -166,7 +169,7 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfiguration addLocalStorage(String name,
+  public SamzaJobConfigBuilder addLocalStorage(String name,
                                                Class<? extends BaseKeyValueStorageEngineFactory> storageEngineFactory,
                                                String keySerde, String messageSerde,
                                                String changelogSystem, String changelogStream) {
@@ -192,7 +195,7 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfiguration yarnPackagePath(String packagePath) {
+  public SamzaJobConfigBuilder yarnPackagePath(String packagePath) {
     isNullOrEmpty(packagePath, "YARN package path");
 
     put(YARN_PACKAGE_PATH, packagePath);
@@ -200,7 +203,7 @@ public class SamzaJobConfiguration extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfiguration yarnContainerCount(int containerCount) {
+  public SamzaJobConfigBuilder yarnContainerCount(int containerCount) {
     if (containerCount <= 0) {
       throw new IllegalArgumentException("Container count is less than or equal to 0.");
     }

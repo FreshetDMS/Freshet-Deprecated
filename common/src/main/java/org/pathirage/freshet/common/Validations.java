@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.pathirage.freshet.beam.utils;
+package org.pathirage.freshet.common;
 
 public class Validations {
   public static void isNullOrEmpty(String value, String kind) {

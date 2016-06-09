@@ -32,6 +32,13 @@ allprojects {
   apply plugin: "idea"
 }
 
+project(':common') {
+  apply plugin: 'java'
+  dependencies {
+    compile "com.google.guava:guava:$guavaVersion"
+  }
+}
+
 project(':beam-runner') {
   apply plugin: 'java'
   dependencies {
@@ -51,8 +58,11 @@ project(':beam-runner') {
 project(':samza-utils') {
   apply plugin: 'java'
   dependencies {
+    compile project(':common')
     compile "org.apache.samza:samza-api:$samzaVersion"
     compile "org.apache.samza:samza-core_$scalaVersion:$samzaVersion"
+    compile "org.apache.samza:samza-kv_$scalaVersion:$samzaVersion"
+    compile "org.apache.samza:samza-kafka_$scalaVersion:$samzaVersion"
     compile "org.apache.samza:samza-yarn_$scalaVersion:$samzaVersion"
     compile "org.apache.curator:curator-framework:$curatorVersion"
     compile "org.apache.kafka:kafka_$scalaVersion:$kafkaVersion"
