@@ -24,12 +24,10 @@ import org.pathirage.freshet.samza.SamzaJobConfigBuilder;
 public class SamzaJobConfigBuilderTest {
   @Test
   public void testAddSystemWithoutSerdes() {
-    SamzaJobConfigBuilder jobConfiguration = new SamzaJobConfigBuilder();
+    SamzaJobConfigBuilder jobConfigBuilder = new SamzaJobConfigBuilder();
 
-    jobConfiguration = jobConfiguration.addSystem("kafka", KafkaSystemFactory.class, null, null, null);
+    jobConfigBuilder = jobConfigBuilder.addSystem("kafka", KafkaSystemFactory.class, null, null, null);
 
-    Assert.assertEquals(KafkaSystemFactory.class.getName(), jobConfiguration.build().get("systems.kafka.samza.factory"));
+    Assert.assertEquals(KafkaSystemFactory.class.getName(), jobConfigBuilder.build().get("systems.kafka.samza.factory"));
   }
-
-
 }

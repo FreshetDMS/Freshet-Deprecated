@@ -15,19 +15,14 @@
  */
 
 package org.pathirage.freshet.beam;
-
-import org.apache.beam.runners.samza.config.SamzaJobConfiguration;
-
 /**
  * Wraps a single stage of a dataflow pipeline as a Samza job.
  */
 public class SamzaJob {
-  private SamzaJobConfiguration jobConfig;
 
   private SamzaJob next;
 
   public void run() {
-
   }
 
   public void setNext(SamzaJob next) {
