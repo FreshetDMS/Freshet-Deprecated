@@ -47,12 +47,12 @@ import java.util.*;
  * methods to create Kafka topics, publish messages and consume messages to/from a Kafka topic.
  */
 public abstract class AbstractSamzaTest {
-  private static ZkClient zkClient;
-  private static EmbeddedZookeeper zkServer;
-  private static int brokerPort = TestUtils.choosePort();
-  private static String brokers = String.format("localhost:%s", brokerPort);
-  private static KafkaServer kafkaServer;
-  private static List<KafkaServer> kafkaServers;
+  static ZkClient zkClient;
+  static EmbeddedZookeeper zkServer;
+  static int brokerPort = TestUtils.choosePort();
+  static String brokers = String.format("localhost:%s", brokerPort);
+  static KafkaServer kafkaServer;
+  static List<KafkaServer> kafkaServers;
 
   @BeforeClass
   public static void setup() {
@@ -113,7 +113,7 @@ public abstract class AbstractSamzaTest {
     zkClient.delete(String.format("/consumers/%s", group));
   }
 
-  protected void verify(String topic, String consumerGroup, QueryOutputVerifier verifier) throws Exception {
+  protected void verify(String topic, String consumerGroup, OutputVerifier verifier) throws Exception {
     Properties consumerProperties = TestUtils.createConsumerProperties(zkServer.connectString(), consumerGroup, "consumer0", -1);
     ConsumerConnector consumer = kafka.consumer.Consumer.createJavaConsumerConnector(new ConsumerConfig(consumerProperties));
 
@@ -125,7 +125,7 @@ public abstract class AbstractSamzaTest {
     verifier.verify(stream);
   }
 
-  public static interface QueryOutputVerifier {
+  public static interface OutputVerifier {
     void verify(KafkaStream<byte[], byte[]> stream) throws Exception;
   }
 

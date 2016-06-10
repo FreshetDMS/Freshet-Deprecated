@@ -19,16 +19,27 @@ package org.pathirage.freshet.samza;
 import org.apache.samza.SamzaException;
 import org.apache.samza.config.JobConfig;
 import org.apache.samza.config.MapConfig;
+import org.apache.samza.coordinator.stream.CoordinatorStreamSystemConsumer;
+import org.apache.samza.coordinator.stream.CoordinatorStreamSystemFactory;
+import org.apache.samza.coordinator.stream.CoordinatorStreamSystemProducer;
 import org.apache.samza.job.ApplicationStatus;
 import org.apache.samza.job.StreamJob;
 import org.apache.samza.job.StreamJobFactory;
+import org.apache.samza.metrics.MetricsRegistryMap;
+import org.apache.samza.system.SystemAdmin;
+import org.apache.samza.system.SystemFactory;
+import org.apache.samza.system.SystemStream;
+import org.apache.samza.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.Tuple2;
 
 import java.util.Map;
 
-public class SamzaJobRunner implements Runnable {
+public class SamzaJobRunner {
   private static Logger log = LoggerFactory.getLogger(SamzaJobRunner.class);
+
+  private static final String SOURCE = "samza-job-runner";
 
   private static final int WAIT_TIMEOUT = 2000;
   private final MapConfig rawConfig;
@@ -37,8 +48,7 @@ public class SamzaJobRunner implements Runnable {
     rawConfig = new MapConfig(configurations);
   }
 
-  @Override
-  public void run() {
+  public StreamJob run() {
     StreamJobFactory jobFactory;
     JobConfig jobConfig = new JobConfig(rawConfig);
 
@@ -52,18 +62,47 @@ public class SamzaJobRunner implements Runnable {
       throw new SamzaException("Cannot instantiate job factory class", e);
     }
 
-    StreamJob job = jobFactory.getJob(rawConfig).submit();
+    CoordinatorStreamSystemFactory coordinatorStreamSystemFactory = new CoordinatorStreamSystemFactory();
+    CoordinatorStreamSystemConsumer coordinatorStreamSystemConsumer =
+        coordinatorStreamSystemFactory.getCoordinatorStreamSystemConsumer(rawConfig, new MetricsRegistryMap());
+    CoordinatorStreamSystemProducer coordinatorStreamSystemProducer =
+        coordinatorStreamSystemFactory.getCoordinatorStreamSystemProducer(rawConfig, new MetricsRegistryMap());
+
+    log.info("Creating coordinator stream");
+    Tuple2<SystemStream, SystemFactory> coordinatorStreamAndFactory =
+        Util.getCoordinatorSystemStreamAndFactory(rawConfig);
+    SystemAdmin systemAdmin =
+        coordinatorStreamAndFactory._2().getAdmin(coordinatorStreamAndFactory._1().getSystem(), rawConfig);
+    systemAdmin.createCoordinatorStream(coordinatorStreamAndFactory._1().getStream());
+
+    log.info("Storing cofig in coordinator stream");
+    coordinatorStreamSystemProducer.register(SOURCE);
+    coordinatorStreamSystemProducer.start();
+    coordinatorStreamSystemProducer.writeConfig(SOURCE, rawConfig);
+
+    coordinatorStreamSystemConsumer.register();
+    coordinatorStreamSystemConsumer.start();
+    coordinatorStreamSystemConsumer.bootstrap();
+    coordinatorStreamSystemConsumer.stop();
+
+    coordinatorStreamSystemProducer.stop();
+
+    // TODO: Deleting old configurations
+
+    // TODO: JobRunnerMigration
+
+    StreamJob job = jobFactory.getJob(jobConfig).submit();
 
     log.info("Waiting for job to start");
 
     ApplicationStatus status = job.waitForStatus(ApplicationStatus.Running, WAIT_TIMEOUT);
 
-    if(status == null) {
-      throw new SamzaException("unable to start job successfully.");
-    } else if (status.equals(ApplicationStatus.Running)) {
-      log.info("job started successfully - " + status);
+    if(status == null || !status.equals(ApplicationStatus.Running)) {
+      throw new SamzaException("unable to start job successfully. job has status " + status);
     } else {
-      log.warn("unable to start job successfully. job has status " + status);
+      log.info("job started successfully - " + status);
     }
+
+    return job;
   }
 }

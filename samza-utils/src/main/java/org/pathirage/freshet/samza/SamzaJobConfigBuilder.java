@@ -19,6 +19,7 @@ package org.pathirage.freshet.samza;
 import org.apache.samza.checkpoint.CheckpointManagerFactory;
 import org.apache.samza.checkpoint.kafka.KafkaCheckpointManagerFactory;
 import org.apache.samza.config.MapConfig;
+import org.apache.samza.job.StreamJobFactory;
 import org.apache.samza.serializers.Serde;
 import org.apache.samza.storage.kv.BaseKeyValueStorageEngineFactory;
 import org.apache.samza.system.SystemFactory;
@@ -64,10 +65,30 @@ public class SamzaJobConfigBuilder extends HashMap<String, String> {
   private static final String YARN_CONTAINER_MAX_CPU_CORES = "yarn.container.cpu.cores";
   private static final String YARN_CONTAINER_COUNT = "yarn.container.count";
 
+  private static final String JOB_COORDINATOR_SYSTEM = "job.coordinator.system";
+  private static final String JOB_COORDINATOR_STREAM_REPLICATION_FACTOR = "job.coordinator.replication.factor";
+  private static final String JOB_NAME = "job.name";
+  private static final String JOB_FACTORY_CLASS = "job.factory.class";
 
 
   public MapConfig build() {
     return new MapConfig(this);
+  }
+
+  public SamzaJobConfigBuilder jobName(String jobName) {
+    isNullOrEmpty(jobName, "Job name");
+
+    put(JOB_NAME, jobName);
+
+    return this;
+  }
+
+  public SamzaJobConfigBuilder jobFactory(Class<? extends StreamJobFactory> factoryClass) {
+    isNull(factoryClass, "Job factory class");
+
+    put(JOB_FACTORY_CLASS, factoryClass.getName());
+
+    return this;
   }
 
   public SamzaJobConfigBuilder addSerde(String name, Class<? extends Serde> serdeClass) {
@@ -113,6 +134,7 @@ public class SamzaJobConfigBuilder extends HashMap<String, String> {
     isNullOrEmpty(system, "System name");
     isNullOrEmpty(name, "Stream name");
 
+    // TODO: fix semantics of isNullOrEmpty. Two methods behave differently.
     if (!isNullOrEmpty(keySerde)) {
       isSerdeExists(keySerde);
       put(format(STREAM_KEY_SERDE, system, name), keySerde);
@@ -123,7 +145,7 @@ public class SamzaJobConfigBuilder extends HashMap<String, String> {
       put(format(STREAM_MSG_SERDE, system, name), messageSerde);
     }
 
-    if (isBootstrap != null) {
+    if (isBootstrap != null && isBootstrap) {
       put(format(STREAM_BOOTSTRAP, system, name), isBootstrap.toString());
     }
 
@@ -215,9 +237,36 @@ public class SamzaJobConfigBuilder extends HashMap<String, String> {
     return this;
   }
 
+  public SamzaJobConfigBuilder jobCoordinatorSystem(String system, Integer replicationFactor) {
+    isSystemExists(system);
+
+    put(JOB_COORDINATOR_SYSTEM, system);
+
+    if (replicationFactor != null) {
+      put(JOB_COORDINATOR_STREAM_REPLICATION_FACTOR, Integer.toString(replicationFactor));
+    }
+
+    return this;
+  }
+
+  public SamzaJobConfigBuilder addCustomConfig(String name, String value) {
+    isNullOrEmpty(name, "Custom configuration name");
+    isNullOrEmpty(value, "Custom configuration value");
+
+    put(name, value);
+
+    return this;
+  }
+
   private void isSerdeExists(String serde) {
-    if(!containsKey(format(SERIALIZER_SERDE_CLASS, serde))) {
+    if (!containsKey(format(SERIALIZER_SERDE_CLASS, serde))) {
       throw new IllegalArgumentException("Cannot find Serde " + serde + ".");
+    }
+  }
+
+  private void isSystemExists(String system) {
+    if (!containsKey(format(SYSTEM_FACTORY, system))) {
+      throw new IllegalArgumentException();
     }
   }
 }
