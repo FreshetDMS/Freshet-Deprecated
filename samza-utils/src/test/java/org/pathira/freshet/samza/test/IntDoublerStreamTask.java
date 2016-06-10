@@ -22,6 +22,8 @@ import org.apache.samza.system.OutgoingMessageEnvelope;
 import org.apache.samza.system.SystemStream;
 import org.apache.samza.task.*;
 
+import java.nio.ByteBuffer;
+
 public class IntDoublerStreamTask implements StreamTask, InitableTask {
 
   public static final String OUTPUT_STREAM = "intdoubler.output.stream";
@@ -38,7 +40,7 @@ public class IntDoublerStreamTask implements StreamTask, InitableTask {
       coordinator.shutdown(TaskCoordinator.RequestScope.ALL_TASKS_IN_CONTAINER);
     }
 
-    collector.send ( new OutgoingMessageEnvelope(outputStream, (Integer)envelope.getMessage() * 2));
+    collector.send ( new OutgoingMessageEnvelope(outputStream, ByteBuffer.allocate(4).putInt((Integer)envelope.getMessage() * 2).array()));
     msgCount++;
   }
 

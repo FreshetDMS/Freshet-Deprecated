@@ -62,7 +62,9 @@ project(':samza-utils') {
     compile "org.apache.samza:samza-core_$scalaVersion:$samzaVersion"
     compile "org.apache.samza:samza-kv_$scalaVersion:$samzaVersion"
     compile "org.apache.samza:samza-kafka_$scalaVersion:$samzaVersion"
-    compile "org.apache.samza:samza-yarn_$scalaVersion:$samzaVersion"
+    compile ("org.apache.samza:samza-yarn_$scalaVersion:$samzaVersion") {
+      exclude group: 'javax.servlet', module: 'servlet-api'
+    }
     compile "org.apache.curator:curator-framework:$curatorVersion"
     compile "org.apache.kafka:kafka_$scalaVersion:$kafkaVersion"
     compile "org.apache.kafka:kafka-clients:$kafkaVersion"

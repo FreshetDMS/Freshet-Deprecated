@@ -21,6 +21,7 @@ import org.apache.samza.checkpoint.kafka.KafkaCheckpointManagerFactory;
 import org.apache.samza.config.MapConfig;
 import org.apache.samza.job.StreamJobFactory;
 import org.apache.samza.serializers.Serde;
+import org.apache.samza.serializers.SerdeFactory;
 import org.apache.samza.storage.kv.BaseKeyValueStorageEngineFactory;
 import org.apache.samza.system.SystemFactory;
 import org.apache.samza.task.StreamTask;
@@ -91,7 +92,7 @@ public class SamzaJobConfigBuilder extends HashMap<String, String> {
     return this;
   }
 
-  public SamzaJobConfigBuilder addSerde(String name, Class<? extends Serde> serdeClass) {
+  public SamzaJobConfigBuilder addSerde(String name, Class<? extends SerdeFactory> serdeClass) {
     isNullOrEmpty(name, "Serde name");
     isNull(serdeClass, "Serde class");
 

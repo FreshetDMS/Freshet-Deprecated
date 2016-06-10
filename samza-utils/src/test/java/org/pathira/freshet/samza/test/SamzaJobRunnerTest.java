@@ -7,6 +7,7 @@ import org.apache.samza.config.MapConfig;
 import org.apache.samza.job.StreamJob;
 import org.apache.samza.job.local.ThreadJobFactory;
 import org.apache.samza.serializers.IntegerSerde;
+import org.apache.samza.serializers.IntegerSerdeFactory;
 import org.apache.samza.system.kafka.KafkaSystemFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class SamzaJobRunnerTest extends AbstractSamzaTest {
     kafkaConfig.put("producer.bootstrap.servers", brokers);
 
     jobConfigBuilder.task(IntDoublerStreamTask.class)
-        .addSerde("int", IntegerSerde.class)
+        .addSerde("int", IntegerSerdeFactory.class)
         .addSystem("kafka", KafkaSystemFactory.class, null, null, new MapConfig(kafkaConfig))
         .addStream("kafka", "input", null, "int", false)
         .addInput("kafka", "input")
@@ -43,7 +44,7 @@ public class SamzaJobRunnerTest extends AbstractSamzaTest {
 
     createTopic("input", 1);
 
-    StreamJob job = new SamzaJobRunner(jobConfigBuilder.build()).run();
+    final StreamJob job = new SamzaJobRunner(jobConfigBuilder.build()).run();
 
     List<KeyedMessage> input = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
@@ -59,15 +60,13 @@ public class SamzaJobRunnerTest extends AbstractSamzaTest {
       public void verify(KafkaStream<byte[], byte[]> stream) throws Exception {
         ConsumerIterator<byte[], byte[]> consumerIterator = stream.iterator();
         int i = 0;
-        while (consumerIterator.hasNext() && i <= 10) {
+        while (consumerIterator.hasNext() && i < 10) {
           i++;
         }
 
         Assert.assertEquals(10, i);
       }
     });
-
-    job.kill();
   }
 
   private KeyedMessage createMessage(String topic, int n) {
