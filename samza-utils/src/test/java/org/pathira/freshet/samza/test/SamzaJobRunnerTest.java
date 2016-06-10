@@ -6,7 +6,6 @@ import kafka.producer.KeyedMessage;
 import org.apache.samza.config.MapConfig;
 import org.apache.samza.job.StreamJob;
 import org.apache.samza.job.local.ThreadJobFactory;
-import org.apache.samza.serializers.IntegerSerde;
 import org.apache.samza.serializers.IntegerSerdeFactory;
 import org.apache.samza.system.kafka.KafkaSystemFactory;
 import org.junit.Assert;
