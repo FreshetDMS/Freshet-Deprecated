@@ -23,3 +23,12 @@
 
 ## run(Pipeline pipeline)
 
+* stage files
+* register debuggee based on options
+* translator generates a cloud dataflow job spec from *pipeline*.
+* set up cloud dataflow job environment (temp location, temp dataset, experiments)
+* setup work harness container image?
+* setup job requirements (env version, job type [streaming vs batch]
+* configure job update if this is an update
+* execute job via dataflow client.
+* setup post launch monitoring
