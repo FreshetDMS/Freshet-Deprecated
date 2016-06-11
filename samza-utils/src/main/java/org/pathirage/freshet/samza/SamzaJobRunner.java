@@ -36,6 +36,9 @@ import scala.Tuple2;
 
 import java.util.Map;
 
+/**
+ * Executes a Samza job given job's configuration.
+ */
 public class SamzaJobRunner {
   private static Logger log = LoggerFactory.getLogger(SamzaJobRunner.class);
 
@@ -44,10 +47,18 @@ public class SamzaJobRunner {
   private static final int WAIT_TIMEOUT = 2000;
   private final MapConfig rawConfig;
 
+  /**
+   * Creates an instance of {@link SamzaJobRunner}.
+   * @param configurations Samza job configuration
+   */
   public SamzaJobRunner(Map<String, String> configurations) {
     rawConfig = new MapConfig(configurations);
   }
 
+  /**
+   * Executes Samza job described by {@code rawConfig}.
+   * @return Samza StreamJob instance
+   */
   public StreamJob run() {
     StreamJobFactory jobFactory;
     JobConfig jobConfig = new JobConfig(rawConfig);
@@ -75,6 +86,10 @@ public class SamzaJobRunner {
         coordinatorStreamAndFactory._2().getAdmin(coordinatorStreamAndFactory._1().getSystem(), rawConfig);
     systemAdmin.createCoordinatorStream(coordinatorStreamAndFactory._1().getStream());
 
+    /*
+     * Samza's JobRunner contains logic to create new configuration or modify existing configuration.
+     * We don't need that functionality at this stage. We only need to create a new job with new configuration.
+     */
     log.info("Storing cofig in coordinator stream");
     coordinatorStreamSystemProducer.register(SOURCE);
     coordinatorStreamSystemProducer.start();
@@ -87,6 +102,10 @@ public class SamzaJobRunner {
 
     coordinatorStreamSystemProducer.stop();
 
+    /*
+     * Samza's JobRunner also performs some old configuration value clean up and job runner migration.
+     * We don't need that at this state.
+     */
     // TODO: Deleting old configurations
 
     // TODO: JobRunnerMigration
