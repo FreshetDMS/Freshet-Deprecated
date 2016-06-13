@@ -13,27 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.pathirage.freshet.beam;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Defines dataflow pipeline that get executed as dag of {@link SamzaJobConfig}s.
- * {@link org.apache.beam.runners.samza.SamzaPipelineRunner}  translate a {@link org.apache.beam.sdk.Pipeline} instance
- * to a {@link SamzaPipeline} instance that can be executed as a dag of {@link SamzaJobConfig}s locally or in a remote
- * YARN cluster.
+ * Defines a node in a Samza jobConfig pipeline.
  */
-public class SamzaPipeline {
+public class SamzaPipelineNode {
+  private final List<SamzaPipelineNode> successors = new ArrayList<>();
 
   /**
-   * First job in a Samza pipeline encapsulating a Beam pipeline.
+   * Actual Samza jobConfig
    */
-  private SamzaPipelineNode root;
+  private final SamzaJobConfig jobConfig;
 
-  public SamzaPipeline(SamzaPipelineNode root) {
-    this.root = root;
+  public SamzaPipelineNode(SamzaJobConfig jobConfig) {
+    this.jobConfig = jobConfig;
   }
 
-  public void execute() {
-    // Schedule Samza job starting from root
+  public void addSuccessor(SamzaPipelineNode successor) {
+    successors.add(successor);
+  }
+
+  public List<SamzaPipelineNode> getSuccessors() {
+    return successors;
   }
 }

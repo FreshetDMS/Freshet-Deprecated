@@ -15,21 +15,13 @@
  */
 
 package org.pathirage.freshet.beam;
-/**
- * Wraps a single stage of a dataflow pipeline as a Samza job.
- */
-public class SamzaJob {
 
-  private SamzaJob next;
+import java.util.HashMap;
+import java.util.Map;
 
-  public void run() {
-  }
+public class SamzaJobConfig extends HashMap<String, String> {
 
-  public void setNext(SamzaJob next) {
-    this.next = next;
-  }
-
-  public SamzaJob getNext() {
-    return next;
+  public SamzaJobConfig(Map<? extends String, ? extends String> m) {
+    super(m);
   }
 }

@@ -16,24 +16,22 @@
 
 package org.pathirage.freshet.beam;
 
-/**
- * Defines dataflow pipeline that get executed as dag of {@link SamzaJobConfig}s.
- * {@link org.apache.beam.runners.samza.SamzaPipelineRunner}  translate a {@link org.apache.beam.sdk.Pipeline} instance
- * to a {@link SamzaPipeline} instance that can be executed as a dag of {@link SamzaJobConfig}s locally or in a remote
- * YARN cluster.
- */
-public class SamzaPipeline {
+import org.apache.beam.sdk.Pipeline;
 
-  /**
-   * First job in a Samza pipeline encapsulating a Beam pipeline.
-   */
-  private SamzaPipelineNode root;
+public class SamzaPipelineTranslator {
+  private final SamzaPipelineOptions options;
 
-  public SamzaPipeline(SamzaPipelineNode root) {
-    this.root = root;
+  public static SamzaPipelineTranslator fromOptions(SamzaPipelineOptions options) {
+    return new SamzaPipelineTranslator(options);
   }
 
-  public void execute() {
-    // Schedule Samza job starting from root
+  private SamzaPipelineTranslator(SamzaPipelineOptions options) {
+    this.options = options;
+  }
+
+  public SamzaPipeline translate(Pipeline pipeline) {
+    return null;
   }
 }
+
+

@@ -3,13 +3,13 @@
 ## TODO
 
 * First define Samza specific input and output types (KafkaIO)
-* Simple job which reads from one Kafka topic and write that message to other Kafka topics.
+* Simple jobConfig which reads from one Kafka topic and write that message to other Kafka topics.
 
 ## Requirements
 
 * Job package should be in the options
-* Convert the pipeline to one or more Samza job(s)
-* Pipeline is represented as JSON or in-memory DAG and then use JSON to describe the configuration (including PTransform's) of a single job
+* Convert the pipeline to one or more Samza jobConfig(s)
+* Pipeline is represented as JSON or in-memory DAG and then use JSON to describe the configuration (including PTransform's) of a single jobConfig
 
 ## Questions?
 
