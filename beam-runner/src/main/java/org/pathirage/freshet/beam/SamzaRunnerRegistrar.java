@@ -34,13 +34,13 @@ public class SamzaRunnerRegistrar {
   private SamzaRunnerRegistrar() {}
 
   /**
-   * Registers the {@link SamzaPipelineRunner}
+   * Registers the {@link SamzaRunner}
    */
   @AutoService(PipelineRunnerRegistrar.class)
   public static class Runner implements PipelineRunnerRegistrar {
     @Override
     public Iterable<Class<? extends PipelineRunner<?>>> getPipelineRunners() {
-      return ImmutableList.<Class<? extends PipelineRunner<?>>>of(SamzaPipelineRunner.class);
+      return ImmutableList.<Class<? extends PipelineRunner<?>>>of(SamzaRunner.class);
     }
   }
 

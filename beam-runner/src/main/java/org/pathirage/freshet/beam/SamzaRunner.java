@@ -22,10 +22,13 @@ import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.apache.beam.sdk.options.PipelineOptionsValidator;
 import org.apache.beam.sdk.runners.PipelineRunner;
+import org.apache.beam.sdk.transforms.PTransform;
+import org.apache.beam.sdk.values.PInput;
+import org.apache.beam.sdk.values.POutput;
 
 import java.util.ArrayList;
 
-public class SamzaPipelineRunner extends PipelineRunner<SamzaRunnerResult> {
+public class SamzaRunner extends PipelineRunner<SamzaPipelineJob> {
 
   /**
    * Options used in the context of this pipeline runner.
@@ -33,34 +36,34 @@ public class SamzaPipelineRunner extends PipelineRunner<SamzaRunnerResult> {
   private final SamzaPipelineOptions options;
 
   /**
-   * Creates and returns a new SamzaPipelineRunner with default options for running Samza job locally.
+   * Creates and returns a new SamzaRunner with default options for running Samza job locally.
    *
    * @return  A pipeline runner with default options.
    */
-  public static SamzaPipelineRunner create() {
+  public static SamzaRunner create() {
     SamzaPipelineOptions options = PipelineOptionsFactory.as(SamzaPipelineOptions.class);
-    options.setRunner(SamzaPipelineRunner.class);
+    options.setRunner(SamzaRunner.class);
 
-    return new SamzaPipelineRunner(options);
+    return new SamzaRunner(options);
   }
 
   /**
-   * Creates and returns a new SamzaPipelineRunner with provided options.
+   * Creates and returns a new SamzaRunner with provided options.
    *
    * @param options The SamzaPipelineOptions to use when executing the job.
    * @return A pipeline runner that will execute with specified options.
    */
-  public static SamzaPipelineRunner create(SamzaPipelineOptions options) {
-    return new SamzaPipelineRunner(options);
+  public static SamzaRunner create(SamzaPipelineOptions options) {
+    return new SamzaRunner(options);
   }
 
   /**
-   * Creates and returns a new SamzaPipelineRunner with provided options.
+   * Creates and returns a new SamzaRunner with provided options.
    *
    * @param options The PipelineOptions to use when executing the job.
    * @return A pipeline runner that will execute with specified options.
    */
-  public static SamzaPipelineRunner fromOptions(PipelineOptions options) {
+  public static SamzaRunner fromOptions(PipelineOptions options) {
     SamzaPipelineOptions samzaOptions = PipelineOptionsValidator.validate(SamzaPipelineOptions.class, options);
 
     ArrayList<String> missing = new ArrayList<>();
@@ -73,15 +76,30 @@ public class SamzaPipelineRunner extends PipelineRunner<SamzaRunnerResult> {
           "Missing required values: " + Joiner.on(',').join(missing));
     }
 
-    return new SamzaPipelineRunner(samzaOptions);
+    return new SamzaRunner(samzaOptions);
   }
 
-  private SamzaPipelineRunner(SamzaPipelineOptions options) {
+  private SamzaRunner(SamzaPipelineOptions options) {
     this.options = options;
   }
 
+  /**
+   * Runs a dataflow pipeline as one or more Samza jobs.
+   *
+   * @param pipeline
+   * @return
+   */
   @Override
-  public SamzaRunnerResult run(Pipeline pipeline) {
+  public SamzaPipelineJob run(Pipeline pipeline) {
+    PipelineModeDetector modeDetector = new PipelineModeDetector(options);
+    if(!modeDetector.isStreaming(pipeline)) {
+      throw new IllegalArgumentException("Batch pipelines are not supported yet.");
+    }
     return null;
+  }
+
+  @Override
+  public <OutputT extends POutput, InputT extends PInput> OutputT apply(PTransform<InputT, OutputT> transform, InputT input) {
+    return super.apply(transform, input);
   }
 }

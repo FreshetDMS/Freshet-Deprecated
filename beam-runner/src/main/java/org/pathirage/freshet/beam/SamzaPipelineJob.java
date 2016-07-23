@@ -16,22 +16,22 @@
 
 package org.pathirage.freshet.beam;
 
-import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.PipelineResult;
+import org.apache.beam.sdk.runners.AggregatorRetrievalException;
+import org.apache.beam.sdk.runners.AggregatorValues;
+import org.apache.beam.sdk.transforms.Aggregator;
 
-public class SamzaPipelineTranslator extends Pipeline.PipelineVisitor.Defaults {
-  private final SamzaPipelineOptions options;
-
-  public static SamzaPipelineTranslator fromOptions(SamzaPipelineOptions options) {
-    return new SamzaPipelineTranslator(options);
+/**
+ * A SamzaPipelineJob represents a job submitted to Samza using {@link SamzaRunner}.
+ */
+public class SamzaPipelineJob implements PipelineResult {
+  @Override
+  public State getState() {
+    return null;
   }
 
-  private SamzaPipelineTranslator(SamzaPipelineOptions options) {
-    this.options = options;
-  }
-
-  public SamzaPipelineJobSpecification translate(Pipeline pipeline) {
+  @Override
+  public <T> AggregatorValues<T> getAggregatorValues(Aggregator<?, T> aggregator) throws AggregatorRetrievalException {
     return null;
   }
 }
-
-

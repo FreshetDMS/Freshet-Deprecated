@@ -16,22 +16,8 @@
 
 package org.pathirage.freshet.beam;
 
-import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.transforms.PTransform;
 
-public class SamzaPipelineTranslator extends Pipeline.PipelineVisitor.Defaults {
-  private final SamzaPipelineOptions options;
-
-  public static SamzaPipelineTranslator fromOptions(SamzaPipelineOptions options) {
-    return new SamzaPipelineTranslator(options);
-  }
-
-  private SamzaPipelineTranslator(SamzaPipelineOptions options) {
-    this.options = options;
-  }
-
-  public SamzaPipelineJobSpecification translate(Pipeline pipeline) {
-    return null;
-  }
+public interface TransformTranslator<TransformT extends PTransform> {
+  void translate(TransformT transform, PipelineTranslationContext translationContext);
 }
-
-

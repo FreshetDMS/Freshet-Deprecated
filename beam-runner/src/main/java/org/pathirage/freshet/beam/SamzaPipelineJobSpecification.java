@@ -16,19 +16,24 @@
 
 package org.pathirage.freshet.beam;
 
-import org.apache.beam.sdk.PipelineResult;
-import org.apache.beam.sdk.runners.AggregatorRetrievalException;
-import org.apache.beam.sdk.runners.AggregatorValues;
-import org.apache.beam.sdk.transforms.Aggregator;
+/**
+ * Defines dataflow pipeline that get executed as dag of Samza jobs.
+ * {@link SamzaRunner}  translate a {@link org.apache.beam.sdk.Pipeline} instance
+ * to a {@link SamzaPipelineJobSpecification} instance that can be executed as a dag of {@link SamzaJobConfig}s locally or in a remote
+ * YARN cluster.
+ */
+public class SamzaPipelineJobSpecification {
 
-public class SamzaRunnerResult implements PipelineResult {
-  @Override
-  public State getState() {
-    return null;
+  /**
+   * First job in a Samza pipeline encapsulating a Beam pipeline.
+   */
+  private SamzaPipelineNode root;
+
+  public SamzaPipelineJobSpecification(SamzaPipelineNode root) {
+    this.root = root;
   }
 
-  @Override
-  public <T> AggregatorValues<T> getAggregatorValues(Aggregator<?, T> aggregator) throws AggregatorRetrievalException {
-    return null;
+  public void execute() {
+    // Schedule Samza job starting from root
   }
 }
