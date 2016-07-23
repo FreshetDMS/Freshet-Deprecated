@@ -17,8 +17,21 @@
 package org.pathirage.freshet.beam;
 
 import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.transforms.PTransform;
+import org.pathirage.freshet.beam.io.KafkaIO;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SamzaPipelineTranslator extends Pipeline.PipelineVisitor.Defaults {
+
+  private static final Map<Class<? extends PTransform>, TransformTranslator> transformTranslators = new HashMap();
+
+  static {
+    transformTranslators.put(KafkaIO.Read.Unbound.class, new KafkaIOReadUnboundTranslator());
+    transformTranslators.put(KafkaIO.Write.Unbound.class, new KafkaIOWriteUnboundTranslator());
+  }
+
   private final SamzaPipelineOptions options;
 
   public static SamzaPipelineTranslator fromOptions(SamzaPipelineOptions options) {
@@ -31,6 +44,22 @@ public class SamzaPipelineTranslator extends Pipeline.PipelineVisitor.Defaults {
 
   public SamzaPipelineJobSpecification translate(Pipeline pipeline) {
     return null;
+  }
+
+  private static class KafkaIOReadUnboundTranslator<K,V> implements TransformTranslator<KafkaIO.Read.Unbound<K,V>> {
+
+    @Override
+    public void translate(KafkaIO.Read.Unbound<K, V> transform, PipelineTranslationContext translationContext) {
+
+    }
+  }
+
+  private static class KafkaIOWriteUnboundTranslator<K,V> implements TransformTranslator<KafkaIO.Write.Unbound<K,V>> {
+
+    @Override
+    public void translate(KafkaIO.Write.Unbound<K, V> transform, PipelineTranslationContext translationContext) {
+
+    }
   }
 }
 
