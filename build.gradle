@@ -42,6 +42,7 @@ project(':common') {
 
 project(':beam-runner') {
   dependencies {
+    compile project(':samza-utils')
     compile "org.apache.samza:samza-api:$samzaVersion"
     compile "org.apache.samza:samza-core_$scalaVersion:$samzaVersion"
     compile "org.apache.samza:samza-kv_$scalaVersion:$samzaVersion"

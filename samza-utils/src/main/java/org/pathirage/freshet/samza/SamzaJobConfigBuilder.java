@@ -71,7 +71,9 @@ public class SamzaJobConfigBuilder extends HashMap<String, String> {
   private static final String JOB_NAME = "job.name";
   private static final String JOB_FACTORY_CLASS = "job.factory.class";
 
-
+  public void reset() {
+    clear();
+  }
   public MapConfig build() {
     return new MapConfig(this);
   }

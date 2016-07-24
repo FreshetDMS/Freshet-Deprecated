@@ -38,7 +38,7 @@ public class SamzaRunner extends PipelineRunner<SamzaPipelineJob> {
   /**
    * Creates and returns a new SamzaRunner with default options for running Samza job locally.
    *
-   * @return  A pipeline runner with default options.
+   * @return A pipeline runner with default options.
    */
   public static SamzaRunner create() {
     SamzaPipelineOptions options = PipelineOptionsFactory.as(SamzaPipelineOptions.class);
@@ -92,10 +92,14 @@ public class SamzaRunner extends PipelineRunner<SamzaPipelineJob> {
   @Override
   public SamzaPipelineJob run(Pipeline pipeline) {
     PipelineModeDetector modeDetector = new PipelineModeDetector(options);
-    if(!modeDetector.isStreaming(pipeline)) {
+    if (!modeDetector.isStreaming(pipeline)) {
       throw new IllegalArgumentException("Batch pipelines are not supported yet.");
     }
-    return null;
+
+    SamzaPipelineTranslator translator = SamzaPipelineTranslator.fromOptions(options);
+    SamzaPipelineSpecification pipelineSpec = translator.translate(pipeline);
+
+    return pipelineSpec.execute();
   }
 
   @Override

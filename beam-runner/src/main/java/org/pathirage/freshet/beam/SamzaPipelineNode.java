@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Defines a node in a Samza jobConfig pipeline.
+ * Defines a node in a Samza job pipeline generated from a dataflow pipeline.
  */
 public class SamzaPipelineNode {
   private final List<SamzaPipelineNode> successors = new ArrayList<>();

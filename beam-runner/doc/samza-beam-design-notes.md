@@ -1,3 +1,33 @@
+# 07-24-2016
+
+## Translation Algorithm
+
+```
+var jobSpec;
+var configBuilder;
+
+func translate(Pipeline p) {
+  visit(p)
+}
+
+func visitPrimitive(PTransform t){
+  if (t instanceOf KafkaIO.Read.Unbound) {
+    configBuilder.addKafkaSystem()
+    configBuilder.inputTopics()
+  } else if (t instanceOf KafkaIO.Write.Unbound) {
+    configBuilder.addKafkaSystem()
+    configBuilder.setupOutputTopics()
+  } else if (t instanceOf ParDo.Bound) {
+    // Here is the trick. As long as we have ParDos we have to chain them.
+  } 
+  
+  throw error;
+}
+```
+# 07-23-2016
+
+* In most simple translator, we don't need to generate separate job as long as the key of the message does not change. If key changes, we need to write the output to Kafka for repartitioning.
+
 # 07-22-2016
 
 * We will get the job package from the options. It can be a HTTP url, HDFS url or local file depending on the job runner mode. The job will fail if job can't find the package in the proper location. 
