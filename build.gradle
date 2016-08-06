@@ -34,31 +34,32 @@ subprojects { project ->
   status = rootProject.status
 }
 
-project(':common') {
+project(':freshet-common') {
   dependencies {
     compile "com.google.guava:guava:$guavaVersion"
   }
 }
 
-project(':beam-runner') {
+project(':freshet-beam-runner') {
   dependencies {
-    compile project(':samza-utils')
+    compile project(':freshet-samza-utils')
     compile "org.apache.samza:samza-api:$samzaVersion"
     compile "org.apache.samza:samza-core_$scalaVersion:$samzaVersion"
     compile "org.apache.samza:samza-kv_$scalaVersion:$samzaVersion"
     compile "org.apache.samza:samza-kafka_$scalaVersion:$samzaVersion"
     compile "org.apache.samza:samza-yarn_$scalaVersion:$samzaVersion"
     compile "org.apache.kafka:kafka_$scalaVersion:$kafkaVersion"
-    compile "org.apache.beam:java-sdk-all:$beamVersion"
-    compile "org.apache.beam:java-examples-all:$beamVersion"
+    compile "org.apache.beam:beam-sdks-java-core:$beamVersion"
+    compile "org.apache.beam:beam-sdks-java-extensions-join-library:$beamVersion"
+    compile "org.apache.beam:beam-sdks-java-io-kafka:$beamVersion"
     compile "com.google.guava:guava:$guavaVersion"
     compile "com.google.auto.service:auto-service:$googleAutoServiceVersion"
   }
 }
 
-project(':samza-utils') {
+project(':freshet-samza-utils') {
   dependencies {
-    compile project(':common')
+    compile project(':freshet-common')
     compile "org.apache.samza:samza-api:$samzaVersion"
     compile "org.apache.samza:samza-core_$scalaVersion:$samzaVersion"
     compile "org.apache.samza:samza-kv_$scalaVersion:$samzaVersion"

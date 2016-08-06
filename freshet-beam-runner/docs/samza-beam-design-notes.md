@@ -18,16 +18,13 @@ func visitPrimitive(PTransform t){
     configBuilder.addKafkaSystem()
     configBuilder.setupOutputTopics()
   } else if (t instanceOf ParDo.Bound) {
-    // As long as we have ParDos we have to chain them.
-    // Need to figure out how to send the DoFn to StreamTask
-    // Other thing is if we plan to execute multiple PTransforms how we are going to send multiple transforms and execute them in StreamTask
-    // Best thing for above is to write some code manually assuming we have DoFn and other things in StreamTask
-    // GroupBy, Flatten, Window can be run in the same StreamTask?
+    // Here is the trick. As long as we have ParDos we have to chain them.
   } 
   
   throw error;
 }
 ```
+
 # 07-23-2016
 
 * In most simple translator, we don't need to generate separate job as long as the key of the message does not change. If key changes, we need to write the output to Kafka for repartitioning.

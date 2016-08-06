@@ -24,6 +24,6 @@ ext {
   hadoopVersion = "2.6.1"
   kryoVersion = "3.0.3"
   commonsCLIVersion = "1.3"
-  beamVersion = "0.1.0-incubating-SNAPSHOT"
+  beamVersion = "0.3.0-incubating-SNAPSHOT"
   googleAutoServiceVersion = "1.0-rc2"
 }

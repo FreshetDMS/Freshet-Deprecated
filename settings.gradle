@@ -1,2 +1,2 @@
 rootProject.name = 'freshet'
-include 'beam-runner', 'samza-utils', 'common'
+include 'freshet-beam-runner', 'freshet-samza-utils', 'freshet-common'

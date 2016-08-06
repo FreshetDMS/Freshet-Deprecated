@@ -20,6 +20,9 @@ import org.apache.beam.sdk.PipelineResult;
 import org.apache.beam.sdk.runners.AggregatorRetrievalException;
 import org.apache.beam.sdk.runners.AggregatorValues;
 import org.apache.beam.sdk.transforms.Aggregator;
+import org.joda.time.Duration;
+
+import java.io.IOException;
 
 /**
  * A SamzaPipelineJob represents a job submitted to Samza using {@link SamzaRunner}.
@@ -27,6 +30,21 @@ import org.apache.beam.sdk.transforms.Aggregator;
 public class SamzaPipelineJob implements PipelineResult {
   @Override
   public State getState() {
+    return null;
+  }
+
+  @Override
+  public State cancel() throws IOException {
+    return null;
+  }
+
+  @Override
+  public State waitUntilFinish(Duration duration) throws IOException, InterruptedException {
+    return null;
+  }
+
+  @Override
+  public State waitUntilFinish() throws IOException, InterruptedException {
     return null;
   }
 
