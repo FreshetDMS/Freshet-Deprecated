@@ -17,6 +17,7 @@
 package org.pathirage.freshet.data;
 
 import org.apache.avro.generic.GenericArray;
+import org.apache.avro.generic.GenericRecord;
 import org.pathirage.freshet.api.data.Type;
 import org.pathirage.freshet.api.data.Value;
 
@@ -227,10 +228,42 @@ public class AvroValue implements Value {
   }
 
   public static AvroValue getMap(AvroType type, Object value) {
-    return null;
+    if(type.getType() != Type.TypeName.MAP) {
+      throw new IllegalArgumentException("Can't create a map value with non-map schema: " + type.getType());
+    }
+
+    return new AvroValue(value, type) {
+      private final Map<Object, Object> map = (Map<Object, Object>)value;
+
+      @Override
+      public Map<Object, Object> mapValue() {
+        return map;
+      }
+
+      @Override
+      public Value getFieldValue(String fieldName) {
+        // Avro map's key type defaults to String
+        return type.getValueType().build(map.get(fieldName));
+      }
+    };
   }
 
   public static AvroValue getStruct(AvroType type, Object value) {
-    return null;
+    if(type.getType() != Type.TypeName.STRUCT) {
+      throw new IllegalArgumentException("Can't create a struct value with non-struct schema: " + type.getType());
+    }
+    return new AvroValue(value, type){
+      private final GenericRecord record = (GenericRecord)value;
+
+      @Override
+      public Value getFieldValue(String fieldName) {
+        return type.getField(fieldName, true).getType().build(record.get(fieldName));
+      }
+
+      @Override
+      public Value getFieldValue(int fieldIndex) {
+        return type.getFields().get(fieldIndex).getType().build(record.get(fieldIndex));
+      }
+    };
   }
 }
