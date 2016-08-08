@@ -34,6 +34,28 @@ subprojects { project ->
   status = rootProject.status
 }
 
+project(':freshet-core') {
+  dependencies {
+    compile project(':freshet-common')
+    compile "org.apache.samza:samza-api:$samzaVersion"
+    compile "org.apache.samza:samza-core_$scalaVersion:$samzaVersion"
+    compile "org.apache.samza:samza-kv_$scalaVersion:$samzaVersion"
+    compile "org.apache.samza:samza-kafka_$scalaVersion:$samzaVersion"
+    compile ("org.apache.samza:samza-yarn_$scalaVersion:$samzaVersion") {
+      exclude group: 'javax.servlet', module: 'servlet-api'
+    }
+    compile "org.apache.avro:avro:$avroVersion"
+    compile "org.apache.curator:curator-framework:$curatorVersion"
+    compile "org.apache.kafka:kafka_$scalaVersion:$kafkaVersion"
+    compile "org.apache.kafka:kafka-clients:$kafkaVersion"
+    compile "com.101tec:zkclient:$zkClientVersion"
+    compile "org.apache.zookeeper:zookeeper:$zookeeperVersion"
+    testCompile "org.apache.curator:curator-test:$curatorVersion"
+    testCompile "org.apache.kafka:kafka_$scalaVersion:$kafkaVersion:test"
+    testCompile "junit:junit:$junitVersion"
+  }
+}
+
 project(':freshet-common') {
   dependencies {
     compile "com.google.guava:guava:$guavaVersion"
